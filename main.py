@@ -10,7 +10,7 @@ from pages.eliminar import _view_ as eliminar_view
 def main(page: ft.Page):
     page.title = "Mailer App"
     page.window_width = 500
-    page.window_height = 650
+    page.window_height = 600
 
     index = index_view()
     nuevo = nuevo_view()
@@ -47,22 +47,6 @@ def main(page: ft.Page):
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     page.go(page.route)
-
-    # container_correos_transportista = ft.Container(
-    #     # content=, Acá va la lista de correos
-    #     height=250,
-    #     bgcolor="gray",
-    #     border=ft.border.all(width=0.7, color=ft.colors.LIGHT_BLUE_400)
-    # )
-
-    # container_send_email = ft.Container(
-    #     content=ft.ElevatedButton(
-    #         text="Enviar email",
-    #         icon="send_rounded"
-    #     ),
-    #     height=150,
-    #     alignment=ft.alignment.bottom_right
-    # )
 
 
 ft.app(target=main)
