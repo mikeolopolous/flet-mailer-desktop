@@ -41,24 +41,36 @@ def _view_():
                     data=sociedad
                 )
 
-                e.page.snack_bar = ft.SnackBar(
-                    content=ft.Text(
-                        value="Nueva razón social agregada",
-                        text_align=ft.TextAlign.CENTER,
-                    ),
-                    bgcolor=ft.colors.LIGHT_BLUE_200
-                )
-                e.page.snack_bar.duration = 3000
-                e.page.snack_bar.open = True
+                if response.status_code == 201:
+                    e.page.snack_bar = ft.SnackBar(
+                        content=ft.Text(
+                            value="Nueva razón social agregada",
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+                        bgcolor=ft.colors.LIGHT_BLUE_200
+                    )
+                    e.page.snack_bar.duration = 3000
+                    e.page.snack_bar.open = True
 
-                razon_social.value = ""
-                correos.value = ""
+                    razon_social.value = ""
+                    correos.value = ""
+                else:
+                    e.page.snack_bar = ft.SnackBar(
+                        content=ft.Text(
+                            value="Ya existe la razón social",
+                            text_align=ft.TextAlign.CENTER,
+                        ),
+                        bgcolor="#ff6347"
+                    )
+                    e.page.snack_bar.duration = 3000
+                    e.page.snack_bar.open = True
+
                 e.page.update()
 
             except:
                 e.page.snack_bar = ft.SnackBar(
                     content=ft.Text("Error al insertar a base de datos", text_align=ft.TextAlign.CENTER),
-                    bgcolor="red"
+                    bgcolor="#ff6347"
                 )
                 e.page.snack_bar.duration = 3000
                 e.page.snack_bar.open = True
