@@ -1,28 +1,91 @@
 import flet as ft
+import requests
 
 
-from widgets.container_edit_button import container_edit_button
+old_sociedad = ft.TextField(
+    label="Razón social",
+    hint_text="Buscar transportista",
+    label_style=ft.TextStyle(color=ft.colors.LIGHT_BLUE_400),
+    border_width=0.7,
+    border_color=ft.colors.LIGHT_BLUE_400,
+    width=420
+)
+
+updated_sociedad = ft.TextField(
+    label="Nueva razón social",
+    hint_text="vieja razón social",
+    label_style=ft.TextStyle(color=ft.colors.LIGHT_BLUE_400),
+    border_width=0.7,
+    border_color=ft.colors.LIGHT_BLUE_400
+)
+
+updated_correos = ft.TextField(
+    label="Correos",
+    hint_text="correos actuales",
+    label_style=ft.TextStyle(color=ft.colors.LIGHT_BLUE_400),
+    border_width=0.7,
+    border_color=ft.colors.LIGHT_BLUE_400,
+    multiline=True,
+    max_lines=9,
+    height=250
+)
+
+
+URL = "https://mrjuw5qxmbxnnsdljvsqfoyv640yondi.lambda-url.us-east-2.on.aws"
 
 
 def _view_():
 
-    row_search_transportista = ft.Row(
+    def search_razon_social(e):
+        sociedad = old_sociedad.value
+
+        if sociedad != "":
+            try:
+                response = requests.get(f"{URL}/sociedades/{sociedad}")
+                data = response.json()
+
+                if response.status_code == 200:
+                    updated_sociedad.value = data["nombre"]
+                    updated_correos.value = data["correos"]
+
+            except:
+                e.page.snack_bar = ft.SnackBar(
+                    content=ft.Text("No se encontró la razón social", text_align=ft.TextAlign.CENTER),
+                    bgcolor="#ff6347"
+                )
+                e.page.snack_bar.duration = 3000
+                e.page.snack_bar.open = True
+        else:
+            e.page.snack_bar = ft.SnackBar(
+                content=ft.Text("El campo razón social está vacío", text_align=ft.TextAlign.CENTER),
+                bgcolor="#ff6347"
+            )
+            e.page.snack_bar.duration = 3000
+            e.page.snack_bar.open = True
+
+        e.page.update()
+
+
+    row_search_sociedad = ft.Row(
         controls=[
-            ft.TextField(
-                label="Razón social",
-                hint_text="Buscar transportista",
-                label_style=ft.TextStyle(color=ft.colors.LIGHT_BLUE_400),
-                border_width=0.7,
-                border_color=ft.colors.LIGHT_BLUE_400,
-                width=420
-            ),
+            old_sociedad,
             ft.IconButton(
                 icon="SEARCH",
                 icon_size=40,
-                icon_color=ft.colors.LIGHT_BLUE_400
+                icon_color=ft.colors.LIGHT_BLUE_400,
+                on_click=search_razon_social
             )
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+    )
+
+    container_edit_button = ft.Container(
+        content=ft.ElevatedButton(
+            text="Editar",
+            icon="EDIT"
+        ),
+        height=85,
+        alignment=ft.alignment.bottom_right
     )
 
     return ft.View(
@@ -39,29 +102,13 @@ def _view_():
                         ft.PopupMenuItem(text="Nuevo", on_click=lambda e: e.page.go("/nuevo")),
                         ft.PopupMenuItem(text="Eliminar", on_click=lambda e: e.page.go("/eliminar"))
                     ]
-
                 )
             ]
         ),
         controls=[
-            row_search_transportista,
-            ft.TextField(
-                label="Nueva razón social",
-                hint_text="vieja razón social", # Acá va la antigua razón social como guía
-                label_style=ft.TextStyle(color=ft.colors.LIGHT_BLUE_400),
-                border_width=0.7,
-                border_color=ft.colors.LIGHT_BLUE_400
-            ),
-            ft.TextField(
-                label="Correos",
-                hint_text="correos actuales", # Acá va la lista de correos actuales
-                label_style=ft.TextStyle(color=ft.colors.LIGHT_BLUE_400),
-                border_width=0.7,
-                border_color=ft.colors.LIGHT_BLUE_400,
-                multiline=True,
-                max_lines=9,
-                height=250
-            ),
+            row_search_sociedad,
+            updated_sociedad,
+            updated_correos,
             container_edit_button
         ]
     )
